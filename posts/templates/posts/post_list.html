@@ -1,0 +1,51 @@
+{# posts/post_list.html #}
+{% extends "base.html" %}
+{% block title %}All Posts{% endblock %}
+
+{% block content %}
+    <h1>All Posts</h1>
+
+    {% for post in posts %}
+        <div class="post-card">
+            <h2><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h2>
+            <p class="post-meta">
+                By {{ post.author.username }} on {{ post.date_posted|date:"F d, Y" }}
+                
+                {# Public/Private Status #}
+                <span style="font-size: 0.9em; margin-left: 10px;">
+                    {% if post.is_public %}
+                        <span style="color: green;">🌐 Public</span>
+                    {% else %}
+                        <span style="color: darkred;">🔒 Private</span>
+                    {% endif %}
+                </span>
+
+                {# Documents for Admin Users (full names shown) #}
+                {% if user.is_authenticated %}
+                    {# CORRECTED: Nested if statement for permissions #}
+                    {% if user.is_superuser or user == post.author %}
+                        {% if post.documents.all %}
+                            <span style="font-size: 1.1em; margin-left: 15px;">
+                                {% for doc in post.documents.all %}
+                                    <a href="{{ doc.file.url }}" target="_blank" rel="noopener noreferrer" 
+                                       title="Download: {{ doc.name|default:doc.file.name }} ({{ doc.file.size|filesizeformat }})"
+                                       style="margin-right: 5px;">
+                                        <span style="font-size: 1.5em; vertical-align: middle;">📄</span> {# Larger icon #}
+                                        <span style="vertical-align: middle;">{{ doc.name|default:doc.file.name }}</span> {# Full document name #}
+                                    </a>
+                                {% endfor %}
+                            </span>
+                        {% else %}
+                            <span style="font-size: 0.9em; color: #888; margin-left: 15px;">
+                                (No documents attached)
+                            </span>
+                        {% endif %}
+                    {% endif %} {# End of is_superuser or post.author check #}
+                {% endif %} {# End of is_authenticated check #}
+
+            </p>
+            <p>{{ post.content|truncatechars:200 }}</p>
+            <a href="{% url 'post-detail' post.pk %}" class="btn btn-secondary">Read More</a>
+        </div>
+    {% endfor %}
+{% endblock %}

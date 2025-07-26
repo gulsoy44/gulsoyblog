@@ -1,0 +1,88 @@
+{# templates/profile.html #}
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+    <div style="
+        max-width: 500px; /* Adjust width as needed for profile content */
+        margin: 3em auto; /* Centers the div horizontally and adds vertical margin */
+        padding: 2.5em; /* Slightly more padding for profile */
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5em; /* Spacing between sections */
+    ">
+        <h2 style="color: #333; margin-bottom: 0.5em;">{{ user.username }}'s Profile</h2>
+        
+        {# Profile Picture Display #}
+        <div style="margin-bottom: 1em;">
+            <img class="profile-pic" src="{{ user.profile_picture.url }}" alt="Profile Picture" style="
+                width: 120px;
+                height: 120px;
+                border-radius: 50%; /* Make it circular */
+                object-fit: cover; /* Ensure image covers the area */
+                border: 3px solid #007bff; /* Add a border */
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            ">
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 1.2em; width: 100%;">
+            {% csrf_token %}
+            {% for field in form.visible_fields %}
+                <div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;">
+                    <label for="{{ field.id_for_label }}" style="font-weight: bold; margin-bottom: 0.5em; color: #555; text-align: left; width: 100%;">
+                        {% if field.name == 'username' %}👤 Username{% endif %}
+                        {% if field.name == 'email' %}🔒 Password {# Changed label and icon as requested #}{% endif %}
+                        {% if field.name == 'profile_picture' %}🖼️ Profile Picture{% endif %}
+                        {# Fallback for any other fields not explicitly handled, e.g., first_name, last_name #}
+                        {% if not field.name in 'username,email,profile_picture' %}{{ field.label }}{% endif %}
+                    </label>
+                    <div style="display: flex; align-items: center; border: 1px solid #ddd; border-radius: 5px; padding: 0.5em 0.8em; background-color: #f9f9f9; width: 100%;">
+                        {# Custom rendering for profile_picture to remove "Currently:" text #}
+                        {% if field.name == 'profile_picture' %}
+                            {% if field.value %}
+                                <span style="margin-right: 10px;">{{ field.value.name|cut:"profile_pics/" }}</span>
+                                {% if field.field.widget.clear_checkbox_name %}
+                                    <input type="checkbox" name="{{ field.field.widget.clear_checkbox_name }}" id="{{ field.field.widget.clear_checkbox_id }}" style="margin-left: 5px;">
+                                    <label for="{{ field.field.widget.clear_checkbox_id }}" style="margin-left: 5px; font-weight: normal; margin-bottom: 0;">Clear</label>
+                                {% endif %}
+                            {% endif %}
+                            <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}" {% if field.field.required %}required{% endif %} style="flex-grow: 1; border: none; outline: none; padding: 0.5em; background: transparent;">
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+                    </div>
+                </div>
+                {% if field.errors %}
+                    <ul style="color: red; list-style-type: none; padding: 0; margin: -0.8em 0 0.5em 0; text-align: left; font-size: 0.9em;">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+            {% if form.non_field_errors %}
+                <ul style="color: red; list-style-type: none; padding: 0; margin: 0.5em 0; text-align: left; font-size: 0.9em;">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <button type="submit" class="btn" style="
+                background-color: #007bff; /* Consistent with login button */
+                color: white;
+                padding: 0.8em 1.5em;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 1.1em;
+                transition: background-color 0.3s ease;
+                align-self: stretch; /* Make button fill width */
+                margin-top: 1em; /* Add space above the button */
+            ">Update Profile</button>
+        </form>
+    </div>
+{% endblock %}

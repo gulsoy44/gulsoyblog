@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}{% if form.instance.pk %}Update Post{% else %}Create Post{% endif %}{% endblock %}
+{% block content %}
+    <h2>{% if form.instance.pk %}Update Post{% else %}Create Post{% endif %}</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.title.label_tag }}
+            {{ form.title }}
+        </div>
+        <div class="form-group">
+            {{ form.content.label_tag }}
+            {{ form.content }}
+        </div>
+        <div class="form-group">
+            {{ form.is_public }}
+            {{ form.is_public.label_tag }}
+        </div>
+        <div class="form-group">
+            {{ form.shared_with.label_tag }}
+            {{ form.shared_with }}
+            <small>Select users to share this post with if it's private. Hold Ctrl/Cmd to select multiple.</small>
+        </div>
+
+        <h3>Documents</h3>
+        {{ document_formset.management_form }}
+        {% for form in document_formset %}
+            <div class="form-group">
+                {{ form.as_p }}
+                {% if form.instance.pk %}
+                    <p><a href="{{ form.instance.file.url }}" target="_blank">Current File: {{ form.instance.file.name|cut:"post_documents/" }}</a></p>
+                {% endif %}
+            </div>
+            <hr>
+        {% endfor %}
+
+        <button type="submit" class="btn">{% if form.instance.pk %}Update{% else %}Create{% endif %} Post</button>
+    </form>
+{% endblock %}

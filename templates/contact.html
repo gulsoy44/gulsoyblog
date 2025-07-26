@@ -1,0 +1,32 @@
+{# templates/contact.html #}
+{% extends "base.html" %}
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+    <h1>Contact Us</h1>
+    <p>We'd love to hear from you! Whether you have questions, feedback, or need support, feel free to reach out using the information below.</p>
+
+    <h2>Our Location</h2>
+    <p>
+        <strong>MyBlog Headquarters</strong><br>
+        123 Blog Street<br>
+        Suite 456<br>
+        Istanbul, 34000, Türkiye<br>
+    </p>
+
+    <div style="margin-top: 2em; margin-bottom: 2em;">
+        <h3>Find us on Google Maps:</h3>
+        {# IMPORTANT: Replace this iframe with your actual Google Maps embed code #}
+        {# Go to Google Maps, search for your location, click 'Share', then 'Embed a map', copy the iframe code and paste it here. #}
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4826.90744895692!2d29.024671043932777!3d41.047270446612096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab7c8e42887ad%3A0xfd73f2a29eafc8bc!2sB%C3%BCy%C3%BCk%20Mecidiye%20Camii!5e0!3m2!1str!2str!4v1753366179991!5m2!1str!2str" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+       
+    </div>
+
+    <h2>Get in Touch</h2>
+    <p>
+        <strong>Phone:</strong> +90 212 123 45 67<br>
+        <strong>Email:</strong> info@myblog.com<br>
+        <br>
+        <small>Current time in Istanbul: 5:05 PM (July 24, 2025)</small>
+    </p>
+{% endblock %}

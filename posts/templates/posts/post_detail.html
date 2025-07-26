@@ -1,0 +1,56 @@
+{# posts/post_detail.html #}
+{% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+    <div class="post-detail-card">
+        <h1>{{ post.title }}</h1>
+        <p class="post-meta">
+            By {{ post.author.username }} on {{ post.date_posted|date:"F d, Y" }}
+            
+            {# Public/Private Status #}
+            <span style="font-size: 0.9em; margin-left: 10px;">
+                {% if post.is_public %}
+                    <span style="color: green;">🌐 Public</span>
+                {% else %}
+                    <span style="color: darkred;">🔒 Private</span>
+                {% endif %}
+            </span>
+
+            {# Document Links for Detail Page (full names shown) #}
+            {% if post.documents.all %}
+                <span style="font-size: 0.9em; margin-left: 10px;">
+                    📚 Attached Documents:
+                    {% for doc in post.documents.all %}
+                        <a href="{{ doc.file.url }}" target="_blank" rel="noopener noreferrer" 
+                           title="Download: {{ doc.name|default:doc.file.name|cut:"post_documents/" }} ({{ doc.file.size|filesizeformat }})"> {# MODIFIED: Added |cut here #}
+                            <span style="font-size: 1.2em; vertical-align: middle;">📄</span> {# Icon #}
+                            <span style="vertical-align: middle;">{{ doc.name|default:doc.file.name|cut:"post_documents/" }}</span> {# Already modified #}
+                        </a>
+                        {% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                </span>
+            {% else %}
+                <span style="font-size: 0.9em; color: #888; margin-left: 10px;">
+                    (No documents attached)
+                </span>
+            {% endif %}
+
+        </p>
+        <div class="post-content">
+            <p>{{ post.content|linebreaksbr }}</p>
+        </div>
+
+        <div class="post-actions">
+            <a href="{% url 'post-list' %}" class="btn btn-secondary">Back to Posts</a>
+            {# Display edit/delete buttons only if the user has permission #}
+            {% if user.is_authenticated %}
+                {# CORRECTED: Nested if statement for permissions #}
+                {% if user.is_superuser or user == post.author %}
+                    <a href="{% url 'post-update' post.pk %}" class="btn">Edit Post</a>
+                    <a href="{% url 'post-delete' post.pk %}" class="btn btn-danger">Delete Post</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

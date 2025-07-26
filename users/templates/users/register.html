@@ -1,0 +1,70 @@
+{# templates/register.html #}
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+    <div style="
+        max-width: 450px; /* Slightly wider than login if registration has more fields */
+        margin: 3em auto; /* Centers the div horizontally and adds vertical margin */
+        padding: 2em;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        text-align: center; /* Center the h2 and form elements */
+    ">
+        <h2 style="color: #333; margin-bottom: 1.5em;">Create Your Account</h2>
+        <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 1.2em;">
+            {% csrf_token %}
+            {% for field in form.visible_fields %}
+                <div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;"> {# Changed to column for label above input #}
+                    <label for="{{ field.id_for_label }}" style="font-weight: bold; margin-bottom: 0.5em; color: #555; text-align: left; width: 100%;">
+                        {% if field.name == 'username' %}👤 Username{% endif %}
+                        {% if field.name == 'email' %}📧 Email{% endif %}
+                        {% if field.name == 'password' %}🔒 Password{% endif %}
+                        {% if field.name == 'password2' %}🔒 Retype Password{% endif %}
+                        {% if field.name == 'profile_picture' %}🖼️ Profile Picture{% endif %}
+                        {# Fallback for any other fields not explicitly handled #}
+                        {% if not field.name in 'username,email,password,password2,profile_picture' %}{{ field.label }}{% endif %}
+                    </label>
+                    <div style="display: flex; align-items: center; border: 1px solid #ddd; border-radius: 5px; padding: 0.5em 0.8em; background-color: #f9f9f9; width: 100%;">
+                        {{ field }}
+                    </div>
+                </div>
+                {% if field.errors %}
+                    <ul style="color: red; list-style-type: none; padding: 0; margin: -0.8em 0 0.5em 0; text-align: left; font-size: 0.9em;">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+            {% if form.non_field_errors %}
+                <ul style="color: red; list-style-type: none; padding: 0; margin: 0.5em 0; text-align: left; font-size: 0.9em;">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <button type="submit" class="btn" style="
+                background-color: #28a745; /* A different color for register button */
+                color: white;
+                padding: 0.8em 1.5em;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 1.1em;
+                transition: background-color 0.3s ease;
+                align-self: stretch; /* Make button fill width */
+            ">Register</button>
+        </form>
+
+        <div style="margin-top: 2em; font-size: 1.1em; color: #555;">
+            Already Have An Account? 
+            <a href="{% url 'login' %}" style="
+                color: #007bff; /* Use login button color for consistency */
+                font-weight: bold;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            ">Sign In</a>
+        </div>
+    </div>
+{% endblock %}

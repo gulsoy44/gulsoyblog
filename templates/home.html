@@ -1,0 +1,48 @@
+{# templates/home.html #}
+{% extends "base.html" %}
+
+{% block title %}Welcome to MyBlog{% endblock %}
+
+{% block content %}
+    <div style="text-align: center; margin-bottom: 3em; padding: 2em; background-color: #e9ecef; border-radius: 8px;">
+        <h1>Welcome to MyBlog!</h1>
+        <p>Your source for insightful articles and engaging content.</p>
+        <p>Explore our public posts below, or <a href="{% url 'register' %}">register</a> to unlock exclusive private content and contribute!</p>
+    </div>
+
+    <h2>Latest Public Posts</h2>
+    {% if public_posts %}
+        {% for post in public_posts %}
+            <div class="post-card">
+                <h2><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h2>
+                <p class="post-meta">
+                    By {{ post.author.username }} on {{ post.date_posted|date:"F d, Y" }}
+                    {# Public Icon (since homepage only shows public posts) #}
+                    <span style="font-size: 0.9em; margin-left: 10px;">
+                        <span style="color: green;">🌐 Public</span>
+                    </span>
+
+                    {# START: MODIFIED - Document Links for Public Posts to remove "post_documents/" prefix #}
+                    {% if post.documents.all %}
+                        <span style="font-size: 1.1em; margin-left: 15px;">
+                            {% for doc in post.documents.all %}
+                                <a href="{{ doc.file.url }}" target="_blank" rel="noopener noreferrer" 
+                                   title="Download: {{ doc.name|default:doc.file.name }} ({{ doc.file.size|filesizeformat }})"
+                                   style="margin-right: 5px;">
+                                    <span style="font-size: 1.5em; vertical-align: middle;">📄</span> {# Larger icon #}
+                                    <span style="vertical-align: middle;">{{ doc.name|default:doc.file.name|cut:"post_documents/" }}</span> {# Full document name, with prefix removed #}
+                                </a>
+                            {% endfor %}
+                        </span>
+                    {% endif %}
+                    {# END: MODIFIED - Document Links for Public Posts #}
+
+                </p>
+                <p>{{ post.content|truncatechars:200 }}</p>
+                <a href="{% url 'post-detail' post.pk %}" class="btn btn-secondary">Read More</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No public posts available yet. Check back soon!</p>
+    {% endif %}
+{% endblock %}
