@@ -109,6 +109,22 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
+
+import os
+
+STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Used in production
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # Where your CSS/JS lives during dev
+]
+
+# Enable WhiteNoise static file compression (optional but recommended)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.CustomUser' # Specify our custom user model
